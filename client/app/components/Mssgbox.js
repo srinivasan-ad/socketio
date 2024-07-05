@@ -1,4 +1,4 @@
-"use client";
+'use client'
 import React, { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 
@@ -6,25 +6,27 @@ function Mssgbox() {
   const [message, setMessage] = useState("");
   const [room, setRoom] = useState("");
   const [messagesList, setMessagesList] = useState([]);
-  const [socket, setSocket] = useState(null);
-  const [socketId, setSocketId] = useState("");
+  const [socket, setSocket] = useState(null); 
+  const [socketId, setSocketId] = useState(""); 
 
   useEffect(() => {
-    const socketInstance = io("http://localhost:4000");
-    setSocket(socketInstance);
+    const socket_instance = io("http://localhost:4000");
+    setSocket(socket_instance);
 
-    socketInstance.on("connect", () => {
-      setSocketId(socketInstance.id);
-      handle_mssg_received(`You connected with id ${socketInstance.id}`);
+    
+    socket_instance.on("connect", () => {
+      setSocketId(socket_instance.id);
+      handle_mssg_received(`You connected with id ${socket_instance.id}`);
     });
 
-    socketInstance.on("message_received", (message) => {
+    socket_instance.on("message_received", (message) => {
       handle_mssg_received(message);
     });
 
+ 
     return () => {
-      if (socketInstance) {
-        socketInstance.disconnect();
+      if (socket_instance) {
+        socket_instance.disconnect();
       }
     };
   }, []);
@@ -35,19 +37,20 @@ function Mssgbox() {
   function handle_room_change(e) {
     setRoom(e.target.value);
   }
-  function handle_room() {
-    if (room.trim() !== "") {
-      socket.emit("room_join", room);
-    } else {
-      alert("Room name cannot be empty :)");
-    }
+function handle_room(){
+  if (room.trim() !== '') {
+    socket.emit('room_join', room); 
+    
+  } else {
+    alert("Room name cannot be empty :)");
   }
+}
   function handle_mssg_sent() {
     if (message.trim() !== "") {
-      socket.emit("message_sent", message, room);
-      const message2 = { text: message, type: "sent" };
+      socket.emit('message_sent', message,room); 
+      const message2 = { text: message, type: 'sent' };
       setMessagesList([...messagesList, message2]);
-      setMessage("");
+      setMessage(""); 
     } else {
       alert("Message cannot be empty :)");
     }
@@ -58,11 +61,11 @@ function Mssgbox() {
       e.preventDefault();
       handle_mssg_sent();
     }
-  }
+  };
 
   function handle_mssg_received(receivedMessage) {
-    const newMessage = { text: receivedMessage, type: "received" };
-    setMessagesList((prevMessages) => [...prevMessages, newMessage]);
+    const newMessage = { text: receivedMessage, type: 'received' };
+    setMessagesList(prevMessages => [...prevMessages, newMessage]); 
   }
 
   return (
@@ -107,6 +110,7 @@ function Mssgbox() {
             type="text"
             placeholder="Enter room name...."
             className="border border-slate-400"
+         
           />
           <button className="border border-gray-400 bg-slate-300 rounded-md">
             Create room
@@ -121,10 +125,7 @@ function Mssgbox() {
             value={room}
             onChange={handle_room_change}
           />
-          <button
-            className="border border-gray-400 bg-slate-300 rounded-md"
-            onClick={handle_room}
-          >
+          <button className="border border-gray-400 bg-slate-300 rounded-md" onClick={handle_room}>
             Join room
           </button>
         </div>
